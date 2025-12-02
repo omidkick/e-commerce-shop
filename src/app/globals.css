@@ -1,1 +1,11 @@
 @import "tailwindcss";
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: var(--font-iranYekan);
+  min-height: 100vh;
+  user-select: none;
+  scrollbar-width: thin;
+}
