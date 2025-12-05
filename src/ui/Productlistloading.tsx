@@ -1,11 +1,15 @@
 import React from "react";
 
-const ProductListLoading: React.FC = () => {
-  // Create array of 8 skeleton items to match typical product grid
-  const skeletonItems = Array.from({ length: 8 }, (_, i) => i);
+interface ProductListLoadingProps {
+  count: number;
+}
+
+const ProductListLoading: React.FC<ProductListLoadingProps> = ({ count }) => {
+  // Create array of skeleton items based on count prop
+  const skeletonItems = Array.from({ length: count }, (_, i) => i);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-12">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-4 gap-12">
       {skeletonItems.map((item) => (
         <div
           key={item}

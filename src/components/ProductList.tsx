@@ -9,7 +9,7 @@ import ProductCard from "./ProductCard";
 import Link from "next/link";
 import { ArrowLeftIcon } from "lucide-react";
 import { products } from "@/data/mockData";
-import ProductListLoading from "./Productlistloading";
+import ProductListLoading from "../ui/Productlistloading";
 
 const ProductList = () => {
   const searchParams = useSearchParams();
@@ -34,9 +34,9 @@ const ProductList = () => {
 
     // Simulate API delay (1000ms) for smooth UX
     const timer = setTimeout(() => {
-      setDisplayedProducts(filteredProducts);
+      setDisplayedProducts(filteredProducts.slice(0, 8));
       setIsLoading(false);
-    }, 1000);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [filteredProducts]);
@@ -48,12 +48,12 @@ const ProductList = () => {
 
       {/* Products List */}
       {isLoading ? (
-        <ProductListLoading />
+        <ProductListLoading count={filteredProducts.length} />
       ) : (
         <>
           {/* Animated Product Grid */}
           <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-12"
+            className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-4 gap-12"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
