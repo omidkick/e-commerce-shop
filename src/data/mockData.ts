@@ -17,8 +17,8 @@ export const products: ProductsType = [
       purple: "/products/1p.png",
       green: "/products/1gr.png",
     },
-    category: "t-shirts", // Matches Category slug
-    createdAt: "2024-11-15T10:30:00Z", // ISO date format
+    category: "t-shirts", 
+    createdAt: "2024-11-15T10:30:00Z", 
   },
   {
     id: 2,

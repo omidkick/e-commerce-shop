@@ -1,120 +1,97 @@
 "use client";
 
-import { Suspense } from "react";
-import { ProductsType } from "@/types/types";
-import { useState, useEffect, useMemo } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
 import Category from "./Category";
-import ProductCard from "./ProductCard";
-import Link from "next/link";
-import { ArrowLeftIcon } from "lucide-react";
+import Filter from "./Filter";
+import { sortProducts, filterByCategory } from "@/utils/productUtils";
 import { products } from "@/data/mockData";
-import ProductListLoading from "../ui/Productlistloading";
+import ProductGrid from "./ProductGrid";
+import ViewAllProductsLink from "./ViewAllProductsLink";
+import { ProductsType } from "@/types/types";
+import ProductListLoading from "@/ui/Productlistloading";
 
-const ProductListContent = () => {
+// Constants
+const PRODUCTS_PER_PAGE = 8;
+const LOADING_DELAY = 500; // ms
+
+type ProductListContext = "homepage" | "products";
+
+interface ProductListContentProps {
+  initialCategory?: string;
+  context?: ProductListContext;
+}
+
+// Custom hook for product data and loading state
+const useProductData = (initialCategory: string) => {
   const searchParams = useSearchParams();
-  const selectedCategory = searchParams.get("category") || "all";
+  const [isLoading, setIsLoading] = useState(true); // Start with true
+  const [displayedProducts, setDisplayedProducts] = useState<ProductsType>([]);
 
-  // Loading state to simulate filtering delay and show skeleton
-  const [isLoading, setIsLoading] = useState(false);
-  const [displayedProducts, setDisplayedProducts] =
-    useState<ProductsType>(products);
+  const selectedCategory =
+    initialCategory || searchParams.get("category") || "all";
+  const sortParam = searchParams.get("sort") || "newest";
 
-  // Filter products based on selected category
-  const filteredProducts = useMemo(() => {
-    if (selectedCategory === "all") {
-      return products;
-    }
-    return products.filter((product) => product.category === selectedCategory);
-  }, [selectedCategory]);
-
-  // Simulate loading when category changes
   useEffect(() => {
     setIsLoading(true);
 
-    // Simulate API delay (1000ms) for smooth UX
     const timer = setTimeout(() => {
-      setDisplayedProducts(filteredProducts.slice(0, 8));
+      const filtered = filterByCategory(products, selectedCategory);
+      const sorted = sortProducts(filtered, sortParam);
+      setDisplayedProducts(sorted.slice(0, PRODUCTS_PER_PAGE));
       setIsLoading(false);
-    }, 500);
+    }, LOADING_DELAY);
 
     return () => clearTimeout(timer);
-  }, [filteredProducts]);
+  }, [selectedCategory, sortParam]);
+
+  return {
+    selectedCategory,
+    displayedProducts,
+    isLoading,
+  };
+};
+
+// Component for displaying filtered and sorted products
+const ProductListContent = ({
+  initialCategory = "all",
+  context = "homepage",
+}: ProductListContentProps) => {
+  const { selectedCategory, displayedProducts, isLoading } =
+    useProductData(initialCategory);
+  const isHomepage = context === "homepage";
+  const isProductsPage = context === "products";
 
   return (
-    <div className="w-full">
-      {/* Products List */}
-      {isLoading ? (
-        <ProductListLoading count={filteredProducts.length} />
-      ) : (
-        <>
-          {/* Animated Product Grid */}
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-4 gap-12"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            <AnimatePresence mode="popLayout">
-              {displayedProducts.length > 0 ? (
-                displayedProducts.map((product, index) => (
-                  <motion.div
-                    key={product.id}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{
-                      duration: 0.3,
-                      delay: index * 0.05,
-                    }}
-                    layout
-                  >
-                    <ProductCard product={product} />
-                  </motion.div>
-                ))
-              ) : (
-                // Empty state when no products match filter
-                <motion.div
-                  className="col-span-full text-center py-20"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <p className="text-gray-500 text-lg">
-                    محصولی در این دسته‌بندی یافت نشد
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+    <>
+      {isProductsPage && <Filter />}
 
-          {/* View All Products Link */}
-          {displayedProducts.length > 0 && (
-            <Link
-              href={
-                selectedCategory && selectedCategory !== "all"
-                  ? `/products/?category=${selectedCategory}`
-                  : "/products"
-              }
-              className="mt-8 flex items-center gap-2 text-yellow-500 font-medium hover:underline text-lg"
-            >
-              مشاهده همه محصولات
-              <ArrowLeftIcon className="w-5 h-5" />
-            </Link>
-          )}
-        </>
+      <ProductGrid
+        products={displayedProducts}
+        selectedCategory={selectedCategory}
+        isLoading={isLoading}
+      />
+
+      {!isLoading && displayedProducts.length > 0 && isHomepage && (
+        <ViewAllProductsLink selectedCategory={selectedCategory} />
       )}
-    </div>
+    </>
   );
 };
 
-const ProductList = () => {
+// Main ProductList component
+const ProductList = ({
+  category = "all",
+  context = "homepage",
+}: {
+  category?: string;
+  context?: ProductListContext;
+}) => {
   return (
-    <div className="w-full">
+    <div className="w-full space-y-8">
       <Category />
       <Suspense fallback={<ProductListLoading count={8} />}>
-        <ProductListContent />
+        <ProductListContent initialCategory={category} context={context} />
       </Suspense>
     </div>
   );
