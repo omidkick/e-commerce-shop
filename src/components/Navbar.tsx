@@ -6,7 +6,7 @@ import Logo from "./Logo";
 
 const Navbar = () => {
   return (
-    <nav className="w-full flex items-center justify-between border-b border-gray-200 pb-3">
+    <nav className="w-full flex items-center justify-between border-b border-gray-200 pb-3 mt-3 ">
       {/* Right: Logo*/}
       <Logo />
       {/* Left: searchBar + NavLinks + signin */}
