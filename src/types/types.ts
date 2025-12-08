@@ -27,15 +27,14 @@ export type CartItemsType = CartItemType[];
 
 // Shipping Form Validation Schema and Types using Zod:
 export const shippingFormSchema = z.object({
-  name: z.string().min(1, "Name is required!"),
-  email: z.email().min(1, "Email is required!"),
-  phone: z
+  name: z.string().min(1, "وارد کردن نام الزامی است!"),
+  email: z
     .string()
-    .min(7, "Phone number must be between 7 and 10 digits!")
-    .max(10, "Phone number must be between 7 and 10 digits!")
-    .regex(/^\d+$/, "Phone number must contain only numbers!"),
-  address: z.string().min(1, "Address is required!"),
-  city: z.string().min(1, "City is required!"),
+    .email("ایمیل معتبر وارد کنید!")
+    .min(1, "وارد کردن ایمیل الزامی است!"),
+  phone: z.string().regex(/^09\d{9}$/, "شماره موبایل معتبر نیست!"),
+  address: z.string().min(1, "وارد کردن آدرس الزامی است!"),
+  city: z.string().min(1, "وارد کردن شهر الزامی است!"),
 });
 
 export type ShippingFormInputs = z.infer<typeof shippingFormSchema>;
