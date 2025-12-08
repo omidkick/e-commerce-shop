@@ -1,19 +1,12 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import Category from "./Category";
 import Filter from "./Filter";
-import { sortProducts, filterByCategory } from "@/utils/productUtils";
-import { products } from "@/data/mockData";
 import ProductGrid from "./ProductGrid";
 import ViewAllProductsLink from "./ViewAllProductsLink";
-import { ProductsType } from "@/types/types";
 import ProductListLoading from "@/ui/Productlistloading";
-
-// Constants
-const PRODUCTS_PER_PAGE = 8;
-const LOADING_DELAY = 500; // ms
+import useProductData from "@/hooks/useProductData";
 
 type ProductListContext = "homepage" | "products";
 
@@ -22,43 +15,15 @@ interface ProductListContentProps {
   context?: ProductListContext;
 }
 
-// Custom hook for product data and loading state
-const useProductData = (initialCategory: string) => {
-  const searchParams = useSearchParams();
-  const [isLoading, setIsLoading] = useState(true); // Start with true
-  const [displayedProducts, setDisplayedProducts] = useState<ProductsType>([]);
-
-  const selectedCategory =
-    initialCategory || searchParams.get("category") || "all";
-  const sortParam = searchParams.get("sort") || "newest";
-
-  useEffect(() => {
-    setIsLoading(true);
-
-    const timer = setTimeout(() => {
-      const filtered = filterByCategory(products, selectedCategory);
-      const sorted = sortProducts(filtered, sortParam);
-      setDisplayedProducts(sorted.slice(0, PRODUCTS_PER_PAGE));
-      setIsLoading(false);
-    }, LOADING_DELAY);
-
-    return () => clearTimeout(timer);
-  }, [selectedCategory, sortParam]);
-
-  return {
-    selectedCategory,
-    displayedProducts,
-    isLoading,
-  };
-};
-
 // Component for displaying filtered and sorted products
 const ProductListContent = ({
   initialCategory = "all",
   context = "homepage",
 }: ProductListContentProps) => {
-  const { selectedCategory, displayedProducts, isLoading } =
-    useProductData(initialCategory);
+  // Use the custom hook to get product data
+  const { selectedCategory, displayedProducts, productCount, isLoading } =
+    useProductData(initialCategory, context);
+
   const isHomepage = context === "homepage";
   const isProductsPage = context === "products";
 
@@ -69,6 +34,8 @@ const ProductListContent = ({
       <ProductGrid
         products={displayedProducts}
         selectedCategory={selectedCategory}
+        productCount={productCount}
+        context={context}
         isLoading={isLoading}
       />
 
