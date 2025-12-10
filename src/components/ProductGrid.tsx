@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "./ProductCard";
 import ProductListLoading from "../ui/Productlistloading";
 import EmptyState from "./EmptyState";
-import { ProductsType } from "@/types/types";
+import { ProductsType } from "@/types";
 
 interface ProductGridProps {
   products: ProductsType;

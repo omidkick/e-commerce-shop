@@ -1,6 +1,6 @@
 "use client";
 
-import { ProductType } from "@/types/types";
+import { ProductType } from "../types";
 import { formatPriceInToman } from "@/utils/toPersianNumbers";
 import { ShoppingCart } from "lucide-react";
 import Image from "next/image";
@@ -22,8 +22,6 @@ const ProductCard = ({ product }: { product: ProductType }) => {
   }) => {
     setProductTypes((prev) => ({ ...prev, [type]: value }));
   };
-
-  
 
   return (
     <div className="shadow-lg rounded-lg overflow-hidden">

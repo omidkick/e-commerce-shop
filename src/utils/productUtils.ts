@@ -1,4 +1,4 @@
-import { ProductsType } from "@/types/types";
+import { ProductsType } from "@/types";
 
 // Filter products by category
 export const filterByCategory = (

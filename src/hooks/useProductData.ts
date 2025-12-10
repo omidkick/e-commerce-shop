@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { sortProducts, filterByCategory } from "@/utils/productUtils";
 import { products } from "@/data/mockData";
-import { ProductsType } from "@/types/types";
+import { ProductsType } from "@/types";
 
 // Constants
 const PRODUCTS_PER_PAGE = 8;

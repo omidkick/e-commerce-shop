@@ -1,6 +1,6 @@
 "use client";
 
-import { CartItemsType } from "@/types/types";
+import { CartItemsType } from "@/types";
 import {
   convertToPersianDigits,
   formatPriceInToman,

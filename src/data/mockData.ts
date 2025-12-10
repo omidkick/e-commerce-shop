@@ -1,4 +1,4 @@
-import { ProductsType } from "@/types/types";
+import { ProductsType } from "@/types";
 
 // Mock Products Database with Category and CreatedAt
 export const products: ProductsType = [
@@ -17,8 +17,8 @@ export const products: ProductsType = [
       purple: "/products/1p.png",
       green: "/products/1gr.png",
     },
-    category: "t-shirts", 
-    createdAt: "2024-11-15T10:30:00Z", 
+    category: "t-shirts",
+    createdAt: "2024-11-15T10:30:00Z",
   },
   {
     id: 2,
