@@ -1,15 +1,30 @@
 import { ShippingFormInputs, shippingFormSchema } from "@/types";
 import RHFTextField from "@/ui/RHFTextField";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ContinueButton from "@/ui/ContinueButton";
 
-const ShippingForm = ({
-  setShippingForm,
-}: {
-  setShippingForm: (data: ShippingFormInputs) => void;
-}) => {
+interface ShippingFormProps {
+  /**
+   * Callback function when form is submitted
+   * Receives validated shipping form data
+   */
+  onSubmit: (data: ShippingFormInputs) => void;
+}
+
+/**
+ * ShippingForm Component
+ * Collects user shipping information:
+ * - Name
+ * - Email
+ * - Phone number
+ * - Address
+ * - City
+ *
+ * Uses React Hook Form for validation
+ * Passes data to parent component via callback
+ */
+const ShippingForm: React.FC<ShippingFormProps> = ({ onSubmit }) => {
   const {
     register,
     handleSubmit,
@@ -18,19 +33,17 @@ const ShippingForm = ({
     resolver: zodResolver(shippingFormSchema),
   });
 
-  const router = useRouter();
-
-  const handelShippingForm: SubmitHandler<ShippingFormInputs> = (data) => {
-    setShippingForm(data);
-    router.push("/cart?step=3", { scroll: false });
+  const handleFormSubmit: SubmitHandler<ShippingFormInputs> = (data) => {
+    // Call parent's onSubmit callback with validated data
+    onSubmit(data);
   };
 
   return (
     <form
       className="flex flex-col gap-4"
-      onSubmit={handleSubmit(handelShippingForm)}
+      onSubmit={handleSubmit(handleFormSubmit)}
     >
-      {/* name */}
+      {/* Name Field */}
       <RHFTextField<ShippingFormInputs>
         label="نام و نام خانوادگی"
         name="name"
@@ -41,7 +54,7 @@ const ShippingForm = ({
         placeholder="نام و نام خانوادگی خود را وارد کنید"
       />
 
-      {/* email */}
+      {/* Email Field */}
       <RHFTextField<ShippingFormInputs>
         type="email"
         label="ایمیل"
@@ -53,7 +66,7 @@ const ShippingForm = ({
         placeholder="example@domain.com"
       />
 
-      {/* phone */}
+      {/* Phone Field */}
       <RHFTextField<ShippingFormInputs>
         type="tel"
         label="شماره موبایل"
@@ -64,7 +77,8 @@ const ShippingForm = ({
         isRequired
         placeholder="09123456789"
       />
-      {/* address */}
+
+      {/* Address Field */}
       <RHFTextField<ShippingFormInputs>
         label="آدرس"
         name="address"
@@ -74,7 +88,8 @@ const ShippingForm = ({
         isRequired
         placeholder="آدرس کامل خود را وارد کنید"
       />
-      {/* city */}
+
+      {/* City Field */}
       <RHFTextField<ShippingFormInputs>
         label="شهر"
         name="city"
@@ -85,7 +100,7 @@ const ShippingForm = ({
         placeholder="شهر خود را وارد کنید"
       />
 
-      {/* Submit button */}
+      {/* Submit Button */}
       <ContinueButton type="submit" isLoading={isSubmitting}>
         ادامه خرید
       </ContinueButton>
