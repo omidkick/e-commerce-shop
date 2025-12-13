@@ -1,12 +1,20 @@
-import { PaymentFormInputs, paymentFormSchema } from "@/types";
+import { PaymentFormInputs, paymentFormSchema, OrderDetailsType } from "@/types";
 import ContinueButton from "@/ui/ContinueButton";
 import RHFTextField from "@/ui/RHFTextField";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useState } from "react";
+import useCartStore from "@/stores/cartStore";
+import PaymentSuccessPage from "@/components/PaymentSuccessPage";
+import { ShippingFormInputs } from "@/types";
 
-const PaymentForm = () => {
+interface PaymentFormProps {
+  shippingInfo?: ShippingFormInputs;
+}
+
+const PaymentForm: React.FC<PaymentFormProps> = ({ shippingInfo }) => {
   const {
     register,
     handleSubmit,
@@ -15,10 +23,57 @@ const PaymentForm = () => {
     resolver: zodResolver(paymentFormSchema),
   });
 
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const { cart, saveOrderDetails, clearCart } = useCartStore();
+
   const handlePaymentForm: SubmitHandler<PaymentFormInputs> = (data) => {
-   alert("پرداخت با موفقیت انجام شد!");
-    // Handle payment submission here
+    // Simulate payment processing
+    setTimeout(() => {
+      // Create order details
+      const totalAmount = cart.reduce(
+        (acc, item) => acc + item.price * item.quantity,
+        0
+      );
+      const shippingFee = 100;
+      const finalAmount = totalAmount + shippingFee;
+
+      const orderDetails: OrderDetailsType = {
+        orderId: `ORD-${Date.now()}`,
+        orderDate: new Date().toISOString(),
+        shippingInfo: shippingInfo || {
+          name: "",
+          email: "",
+          phone: "",
+          address: "",
+          city: "",
+        },
+        paymentInfo: {
+          cardHolder: data.cardHolder,
+          expirationDate: data.expirationDate,
+        },
+        items: cart,
+        totalAmount,
+        shippingFee,
+        finalAmount,
+      };
+
+      // Save to localStorage via Zustand
+      saveOrderDetails(orderDetails);
+
+      // Clear cart after successful payment
+      clearCart();
+
+      // Show success page
+      setPaymentSuccess(true);
+    }, 2000); // Simulate payment delay with loading animation
   };
+
+  if (paymentSuccess) {
+    const orderDetails = useCartStore.getState().getOrderDetails();
+    if (orderDetails) {
+      return <PaymentSuccessPage orderDetails={orderDetails} />;
+    }
+  }
 
   return (
     <form
@@ -106,7 +161,7 @@ const PaymentForm = () => {
         icon={<ShoppingCart className="w-4 h-4" />}
         isLoading={isSubmitting}
       >
-        تکمیل سفارش
+        {isSubmitting ? "درحال پرداخت..." : "تکمیل سفارش"}
       </ContinueButton>
     </form>
   );

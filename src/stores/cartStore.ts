@@ -1,13 +1,18 @@
 import { toast } from "react-toastify";
-import { CartStoreActionsType, CartStoreStateType } from "@/types";
+import {
+  CartStoreActionsType,
+  CartStoreStateType,
+  OrderDetailsType,
+} from "@/types";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 const useCartStore = create<CartStoreStateType & CartStoreActionsType>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       cart: [],
       hasHydrated: false,
+      orderDetails: undefined,
       addToCart: (product) =>
         set((state) => {
           const existingIndex = state.cart.findIndex(
@@ -48,6 +53,10 @@ const useCartStore = create<CartStoreStateType & CartStoreActionsType>()(
           toast: toast.success("محصول از سبد خرید حذف شد."),
         })),
       clearCart: () => set({ cart: [] }),
+      saveOrderDetails: (orderDetails: OrderDetailsType) =>
+        set({ orderDetails }),
+      getOrderDetails: () => get().orderDetails,
+      clearOrderDetails: () => set({ orderDetails: undefined }),
     }),
     {
       name: "cart",

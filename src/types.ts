@@ -88,7 +88,7 @@ export type OrderDetailsType = {
   orderId: string;
   orderDate: string;
   shippingInfo: ShippingFormInputs;
-  paymentInfo: Omit<PaymentFormInputs, "cardNumber" | "cvv">; // Don't store sensitive data
+  paymentInfo: Omit<PaymentFormInputs, "cardNumber" | "cvv">; 
   items: CartItemsType;
   totalAmount: number;
   shippingFee: number;

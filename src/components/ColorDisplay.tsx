@@ -32,7 +32,7 @@ const ColorDisplay: React.FC<ColorDisplayProps> = ({
         title={name}
       />
       {showLabel && (
-        <span className="text-sm font-medium text-gray-700">{name}</span>
+        <span className="text-xs">{name}</span>
       )}
     </div>
   );
