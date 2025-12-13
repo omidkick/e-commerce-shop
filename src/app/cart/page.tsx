@@ -190,53 +190,57 @@ function CartPageContent() {
         </div>
 
         {/* RIGHT SIDE - Order Summary */}
-        <div className="w-full lg:w-5/12 shadow-lg border-1 border-gray-100 p-8 rounded-lg flex flex-col gap-8 h-max">
-          {/* Title */}
-          <h2 className="font-semibold">جزئیات پرداخت</h2>
+        {cart.length > 0 && (
+          <div className="w-full lg:w-5/12 shadow-lg border-1 border-gray-100 p-8 rounded-lg flex flex-col gap-8 h-max">
+            {/* Title */}
+            <h2 className="font-semibold">جزئیات پرداخت</h2>
 
-          {/* Price Breakdown */}
-          <div className="flex flex-col gap-4">
-            {/* Total Price */}
-            <div className="flex justify-between text-sm">
-              <p className="text-gray-500">جمع کل</p>
-              <p className="font-medium">
-                {formatPriceInToman(totalAmount.toFixed(2))}
-              </p>
+            {/* Price Breakdown */}
+            <div className="flex flex-col gap-4">
+              {/* Total Price */}
+              <div className="flex justify-between text-sm">
+                <p className="text-gray-500">جمع کل</p>
+                <p className="font-medium">
+                  {formatPriceInToman(totalAmount.toFixed(2))}
+                </p>
+              </div>
+
+              {/* Discount */}
+              <div className="flex justify-between text-sm text-red-500">
+                <p className="">تخفیف</p>
+                <p className="font-medium">
+                  {convertToPersianDigits("0")} تومان
+                </p>
+              </div>
+
+              {/* Shipping Fee */}
+              <div className="flex justify-between text-sm">
+                <p className="text-gray-500">هزینه ارسال</p>
+                <p className="font-medium">
+                  {convertToPersianDigits("100")} تومان
+                </p>
+              </div>
+
+              <hr className="border-gray-200" />
+
+              {/* Final Price */}
+              <div className="flex justify-between font-bold text-gray-800">
+                <p>قابل پرداخت</p>
+                <p>{formatPriceInToman(finalAmount.toFixed(2))}</p>
+              </div>
             </div>
 
-            {/* Discount */}
-            <div className="flex justify-between text-sm text-red-500">
-              <p className="">تخفیف</p>
-              <p className="font-medium">{convertToPersianDigits("0")} تومان</p>
-            </div>
-
-            {/* Shipping Fee */}
-            <div className="flex justify-between text-sm">
-              <p className="text-gray-500">هزینه ارسال</p>
-              <p className="font-medium">
-                {convertToPersianDigits("100")} تومان
-              </p>
-            </div>
-
-            <hr className="border-gray-200" />
-
-            {/* Final Price */}
-            <div className="flex justify-between font-bold text-gray-800">
-              <p>قابل پرداخت</p>
-              <p>{formatPriceInToman(finalAmount.toFixed(2))}</p>
-            </div>
+            {/* Continue Button - Only show on step 1 */}
+            {activeStep === 1 && (
+              <ContinueButton
+                onClick={() => router.push("/cart?step=2", { scroll: false })}
+                disabled={cart.length === 0}
+              >
+                ادامه خرید
+              </ContinueButton>
+            )}
           </div>
-
-          {/* Continue Button - Only show on step 1 */}
-          {activeStep === 1 && (
-            <ContinueButton
-              onClick={() => router.push("/cart?step=2", { scroll: false })}
-              disabled={cart.length === 0}
-            >
-              ادامه خرید
-            </ContinueButton>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );
