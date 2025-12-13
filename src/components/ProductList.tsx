@@ -56,6 +56,7 @@ const ProductList = ({
 }) => {
   return (
     <div className="w-full space-y-8">
+      <h1 className="py-5 md:py-10 text-gray-700 font-black text-3xl ">صفحه محصولات</h1>
       <Category />
       <Suspense fallback={<ProductListLoading count={8} />}>
         <ProductListContent initialCategory={category} context={context} />
